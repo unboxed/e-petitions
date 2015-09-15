@@ -63,4 +63,5 @@ RSpec.configure do |config|
 
   config.include Requests::JsonHelpers, type: :request
   config.include Page::Sanitizer, type: :feature
+  config.include FactoryGirl::Syntax::Methods, type: :feature
 end
