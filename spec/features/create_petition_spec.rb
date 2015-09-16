@@ -38,7 +38,7 @@ RSpec.describe 'Creating Petition', type: :feature do
                  background: 'Give half of Wimbledon rock to wombats!',
                  name: 'Womboid Wibbledon',
                  email: 'womboid@wimbledon.com',
-                 postcode: 'SW14 9RQ',
+                 postcode: 'E1 6PL',
                  location: 'United Kingdom',
                  additional_detail: 'The racial tensions between the wombles and the wombats are heating up.
                    Racial attacks are a regular occurrence and the death count is already in 5 figures.
@@ -47,7 +47,7 @@ RSpec.describe 'Creating Petition', type: :feature do
                }
 
     # TODO: Move to better place
-    stub_request(:get, "http://data.parliament.uk/membersdataplatform/services/mnis/Constituencies/SW149RQ/").
+    stub_request(:get, "http://data.parliament.uk/membersdataplatform/services/mnis/Constituencies/E16PL/").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.1'}).
       to_return(:status => 200, :body => "", :headers => {})
 
