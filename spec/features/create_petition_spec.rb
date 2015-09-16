@@ -82,6 +82,58 @@ RSpec.describe 'Creating Petition', type: :feature do
     # expect(email.subject).to eq 'Action required: Petition'
     # expect(email.body).to match(/\/petitions\/\\d+\/sponsors\/[A-Za-z0-9]+/)
   end
+  
+  it 'create a petition with invalid postcode' do
+    petition = {
+                 action: 'The wombats of wimbledon rock.',
+                 background: 'Give half of Wimbledon rock to wombats!',
+                 name: 'Womboid Wibbledon',
+                 email: 'womboid@wimbledon.com',
+                 postcode: 'AA11 1AA',
+                 location: 'United Kingdom',
+                 additional_detail: 'The racial tensions between the wombles and the wombats are heating up.
+                   Racial attacks are a regular occurrence and the death count is already in 5 figures.
+                   The only resolution to this crisis is to give half of Wimbledon common to the Wombats and
+                   to recognise them as their own independent state.'
+               }
+
+  # TODO: Move to better place
+    stub_request(:get, "http://data.parliament.uk/membersdataplatform/services/mnis/Constituencies/AA111AA/").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.1'}).
+      to_return(:status => 200, :body => "", :headers => {})
+
+    visit new_petition_url
+
+    expect(page).to have_title 'Start a petition - Petitions'
+    expect(page.current_url).to match(%r!^https://!)
+
+    fill_in_all_petition_stages_with petition
+
+    expect(sanitize_page(page)).to be_valid_markup
+    expect(page).to have_content 'Make sure this is right'
+    expect(page).to have_field 'Email'
+
+    click_button 'Yes – this is my email address'
+    expect(page).to have_text 'One more step…'
+
+    last_petition = Petition.last
+    expect(last_petition.action).to eq 'The wombats of wimbledon rock.'
+    expect(last_petition.state).to eq 'pending'
+
+    signature = Signature.where(email: petition[:email]).find_by(name: petition[:name], state: 'pending')
+    expect(signature).not_to be_nil
+    expect(signature.notify_by_email?).to be_truthy
+
+    # TODO: Get emails and assert
+    # on it look at the cuke definitions a little more
+    # open_last_email_for
+
+    # email = ActionMailer::Base.deliveries.last
+    # expect(email.to).to eq petition[:email]
+    # expect(email.subject).to eq 'Action required: Petition'
+    # expect(email.body).to match(/\/petitions\/\\d+\/sponsors\/[A-Za-z0-9]+/)
+  end
+  
 
   def click_start_petition
      within 'main#content' do
