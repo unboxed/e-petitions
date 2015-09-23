@@ -53,10 +53,6 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
-# run background jobs inline with delayed job
-ActiveJob::Base.queue_adapter = :delayed_job
-Delayed::Worker.delay_jobs = false
-
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -65,4 +61,10 @@ RSpec.configure do |config|
   config.include Page::Sanitizer, type: :feature
   config.include FactoryGirl::Syntax::Methods, type: :feature
   config.include ConstituencyApiHelper, type: :feature
+
+  config.before(:each) do
+    # run background jobs inline with delayed job
+    ActiveJob::Base.queue_adapter = :delayed_job
+    Delayed::Worker.delay_jobs = false
+  end
 end
