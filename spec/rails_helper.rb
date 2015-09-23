@@ -62,7 +62,7 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods, type: :feature
   config.include ConstituencyApiHelper, type: :feature
 
-  config.before(:each) do
+  config.before(:each, type: :feature) do
     # run background jobs inline with delayed job
     ActiveJob::Base.queue_adapter = :delayed_job
     Delayed::Worker.delay_jobs = false

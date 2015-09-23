@@ -2,6 +2,20 @@ require 'rails_helper'
 
 RSpec.describe 'Create Petition', type: :feature do
   before(:each) { visit home_url }
+  let(:petition) do
+    {
+      action: 'The wombats of wimbledon rock.',
+      background: 'Give half of Wimbledon rock to wombats!',
+      name: 'Womboid Wibbledon',
+      email: 'womboid@wimbledon.com',
+      postcode: 'E1 6PL',
+      location: 'United Kingdom',
+      additional_detail: 'The racial tensions between the wombles and the wombats are heating up.
+             Racial attacks are a regular occurrence and the death count is already in 5 figures.
+             The only resolution to this crisis is to give half of Wimbledon common to the Wombats
+             and to recognise them as their own independent state.'
+    }
+  end
 
   describe 'with search' do
     let!(:petition) { create(:open_petition, :with_additional_details, :action => "Rioters lose benefits") }
@@ -33,24 +47,8 @@ RSpec.describe 'Create Petition', type: :feature do
   end
 
   describe 'with valid detail' do
-    let(:petition) do
-      {
-        action: 'The wombats of wimbledon rock.',
-        background: 'Give half of Wimbledon rock to wombats!',
-        name: 'Womboid Wibbledon',
-        email: 'womboid@wimbledon.com',
-        postcode: '',
-        location: 'United Kingdom',
-        additional_detail: 'The racial tensions between the wombles and the wombats are heating up.
-               Racial attacks are a regular occurrence and the death count is already in 5 figures.
-               The only resolution to this crisis is to give half of Wimbledon common to the Wombats
-               and to recognise them as their own independent state.'
-      }
-    end
-
     before(:each) do
       stub_any_api_request.to_return(api_response(200, 'single'))
-      ActionMailer::Base.deliveries.clear
     end
 
     [{postcode: 'E1 6PL', type: :valid}, {postcode: 'AA11 1AA', type: :invalid}].each do |data|
@@ -87,6 +85,50 @@ RSpec.describe 'Create Petition', type: :feature do
     end
   end
 
+  describe 'has its first sponsor' do
+    let(:last_petition) { Petition.last }
+    let(:sponsor) {{ email: FactoryGirl.generate(:sponsor_email) }}
+
+    before(:each) do
+      stub_any_api_request.to_return(api_response(200, 'single'))
+    end
+
+    it 'validates the petition and signature' do
+      visit new_petition_url
+
+      fill_in_all_petition_stages_with(petition)
+      click_button 'Yes – this is my email address'
+
+      expect(last_petition.state).to eq 'pending'
+      expect(last_petition.signatures.first.state).to eq 'pending'
+      expect(last_petition.signatures.size).to eq 1
+
+      open_email_for(petition[:email])
+      click_first_link_in_email
+
+      # The petition is actually validated on visiting the link
+      last_petition.reload
+      expect(last_petition.state).to eq 'validated'
+      expect(last_petition.signatures.first.state).to eq 'validated'
+      expect(last_petition.signatures.size).to eq 1
+
+      fill_in_signature_step_with(sponsor)
+      click_button 'Yes – this is my email address'
+
+      expect(page).to have_text 'Check your email and click the link to sign this petition.'
+
+      open_email_for(sponsor[:email])
+      click_first_link_in_email
+
+      expect(page).to have_text 'Thanks Your signature has been added to this petition as a supporter.'
+      expect(last_petition.signatures.size).to eq 2
+
+      signature = last_petition.signatures.for_email(sponsor[:email]).first
+      expect(signature).to be_present
+      expect(signature).to be_sponsor
+    end
+  end
+
   def click_start_petition
      within 'main#content' do
       click_link 'Start a petition'
@@ -107,12 +149,12 @@ RSpec.describe 'Create Petition', type: :feature do
   end
 
   def fill_in_signature_step_with(detail = {})
-    fill_in 'Name', with: detail[:name]
+    fill_in 'Name', with: detail[:name] || 'Ben'
     fill_in 'Email', with: detail[:email]
     check 'I am a British citizen or UK resident'
 
-    fill_in 'Postcode', with: detail[:postcode]
-    select detail[:location], from: 'Location'
+    fill_in 'Postcode', with: detail[:postcode] || 'E1 6PL'
+    select detail[:location] || 'United Kingdom', from: 'Location'
 
     click_button 'Continue'
   end
