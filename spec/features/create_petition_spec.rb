@@ -46,7 +46,6 @@ RSpec.describe 'Creating Petition', type: :feature do
                    to recognise them as their own independent state.'
                }
 
-    # TODO: Move to better place
     stub_request(:get, "http://data.parliament.uk/membersdataplatform/services/mnis/Constituencies/E16PL/").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.1'}).
       to_return(:status => 200, :body => "", :headers => {})
@@ -170,4 +169,10 @@ RSpec.describe 'Creating Petition', type: :feature do
     click_button 'This looks good'
     fill_in_signature_step_with(detail)
   end
+  
+  def check_postcode_with_gov_api(search_query)
+    stub_request(:get, "http://data.parliament.uk/membersdataplatform/services/mnis/Constituencies/" + search_query + "/").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.1'}).
+      to_return(:status => 200, :body => "", :headers => {})
+  end  
 end
