@@ -12,7 +12,7 @@ RSpec.describe 'Cookie message', type: :feature do
     expect(page).not_to have_text('We use cookies to make this service simpler')
   end
   
-  it 'displays message on subsequent vist after a year' do
+  it 'displays message on subsequent visit after a year' do
     travel(1.send('year') + 1.second)
     visit home_url
     expect(page).to have_text 'We use cookies to make this service simpler'
