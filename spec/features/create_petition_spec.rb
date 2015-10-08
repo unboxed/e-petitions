@@ -85,12 +85,14 @@ RSpec.describe 'Create Petition', type: :feature do
       end
     end
 
-    it 'remembers users input when going back a stage' do
+    it 'remembers users input when going back a stage', js: true do
       visit new_petition_url
       fill_in_start_petition_step_with(petition)
 
       expect(page).to have_css('h1', 'Check your petition')
       expect(page).to have_text petition[:action]
+
+      expect(page).not_to have_text petition[:additional_detail]
 
       find(:xpath, "//details/summary[contains(., 'More details')]").click
       expect(page).to have_text petition[:additional_detail]
