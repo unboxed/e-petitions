@@ -46,4 +46,20 @@ RSpec.describe 'View archived petition', type: :feature do
     expect(page).to_not have_content('Deadline')
     expect(page).not_to have_css("a", :text => "Sign")
   end
+  
+  it 'and not be able to sign it' do
+    @petition = FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence')
+    visit archived_petition_url(@petition)
+    expect(current_path).to eq(archived_petition_path(@petition))
+    expect(page).to have_content(@petition.title)
+    expect(page).to have_content(@petition.description)
+    expect(page).to have_title('Spend more money on Defence'.to_s)
+    expect(page).not_to have_css("a", :text => "Sign")
+  end
+  
+  it 'and see the closed message' do
+    @petition = FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence')
+    visit archived_petition_url(@petition)
+    expect(page).to have_content('This petition has been archived It was submitted during the 2010–2015 Conservative – Liberal Democrat coalition government')
+  end
 end
