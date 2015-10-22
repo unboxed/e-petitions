@@ -25,7 +25,7 @@ RSpec.describe 'View archived petition', type: :feature do
   end
   
   it 'that contains urls, email addresses and html tags' do
-    @petition = FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence', description: "<i>We<i> like http://www.google.com and bambi@gmail.com")
+    FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence', description: "<i>We<i> like http://www.google.com and bambi@gmail.com")
     visit archived_petition_url(ArchivedPetition.find_by(title: 'Spend more money on Defence'))
     expect(page).to have_content("<i>We<i>")
     expect(page).to have_link("http://www.google.com", href: "http://www.google.com")
