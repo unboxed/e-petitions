@@ -137,8 +137,8 @@ Then /^I see relevant reason descriptions when I browse different reason codes$/
   choose "Reject"
   select "Duplicate petition", :from => :petition_rejection_code
   expect(page).to have_content "already a petition"
-  select "Confidential, libellous, false or defamatory", :from => :petition_rejection_code
-  expect(page).to have_content "It included confidential, libellous, false or defamatory information."
+  select "Confidential, libellous, false, defamatory or references a court case", :from => :petition_rejection_code
+  expect(page).to have_content "It included confidential, libellous, false or defamatory information, or a reference to a case which is active in the UK courts."
 end
 
 Given(/^a moderator responds to the petition$/) do
@@ -149,6 +149,6 @@ Given(/^a moderator responds to the petition$/) do
     And I follow "Government response"
     And I fill in "Summary quote" with "Get ready"
     And I fill in "Response in full" with "Parliament here it comes"
-    And I press "Email #{NumberHelpers.number_with_delimiter(@petition.signature_count)} #{'signature'.pluralize}"
+    And I press "Email #{NumberHelpers.number_with_delimiter(@petition.signature_count)} petitioners"
   )
 end

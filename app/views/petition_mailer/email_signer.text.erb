@@ -1,10 +1,9 @@
-Hi <%= @signature.name %>,
+Dear <%= @signature.name %>,
+
+You recently signed the petition "<%= @petition.action %>":
+<%= petition_url(@petition) %>
 
 <%= @email.body %>
-
-Click this link to view the petition "<%= @petition.action %>":
-
-<%= petition_url(@petition) %>
 
 Thanks,
 <%= t("petitions.emails.signoff_prefix") %>

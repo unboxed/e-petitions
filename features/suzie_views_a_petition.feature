@@ -61,6 +61,16 @@ Feature: Suzie views a petition
     When I view the petition
     Then I should not see the petition creator
 
+  Scenario: Suzie does not see information about other parliamentary business when there is none
+    Given an open petition "Ban Badger Baiting"
+    When I view the petition
+    Then I should not see "Other parliamentary business"
+
+  Scenario: Suzie sees information about other parliamentary business when there is some
+    Given a petition "Ban Badger Baiting" has other parliamentary business
+    When I view the petition
+    Then I should see the other business items
+
   Scenario: Suzie sees information about the outcomes when viewing a debated petition
     Given a petition "Ban Badger Baiting" has been debated 2 days ago
     When I view the petition
@@ -73,3 +83,8 @@ Feature: Suzie views a petition
     And an open petition "Spend more money on Defence" with scheduled debate date of "18/08/2015"
     When I view the petition
     Then I should see "Parliament will debate this petition on 18 August 2015. You'll be able to watch online at parliamentlive.tv"
+
+  Scenario: Suzie views a petition which will not be debated
+    Given a petition "Spend more money on Defence" with a negative debate outcome
+    When I view the petition
+    Then I should see "The Petitions Committee decided not to debate this petition"

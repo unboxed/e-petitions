@@ -54,12 +54,39 @@ RSpec.describe CacheHelper, type: :helper do
       end
     end
 
+    describe "#last_petition_created_at" do
+      let(:now) { Time.current }
+
+      it "delegates to the Site instance" do
+        expect(Site).to receive(:last_petition_created_at).and_return(now)
+        expect(keys.last_petition_created_at).to eq(now)
+      end
+    end
+
     describe "#last_signature_at" do
       let(:now) { Time.current }
 
       it "delegates to the template context" do
         expect(helper).to receive(:last_signature_at).and_return(now)
         expect(keys.last_signature_at).to eq(now)
+      end
+    end
+
+    describe "#last_government_response_updated_at" do
+      let(:now) { Time.current }
+
+      it "delegates to the template context" do
+        expect(helper).to receive(:last_government_response_updated_at).and_return(now)
+        expect(keys.last_government_response_updated_at).to eq(now)
+      end
+    end
+
+    describe "#last_debate_outcome_updated_at" do
+      let(:now) { Time.current }
+
+      it "delegates to the template context" do
+        expect(helper).to receive(:last_debate_outcome_updated_at).and_return(now)
+        expect(keys.last_debate_outcome_updated_at).to eq(now)
       end
     end
 
@@ -144,6 +171,15 @@ RSpec.describe CacheHelper, type: :helper do
       it "delegates to the Site instance" do
         expect(Site).to receive(:updated_at).and_return(now)
         expect(keys.site_updated_at).to eq(now)
+      end
+    end
+
+    describe "#url" do
+      let(:request) { double(:request, original_url: "/petitions/123") }
+
+      it "delegates to the request's original_url method" do
+        expect(helper).to receive(:request).and_return(request)
+        expect(keys.url).to eq("/petitions/123")
       end
     end
 

@@ -1,11 +1,7 @@
 head:
   keys:
     - :site_updated_at
-    - :last_signature_at
-    - :petition_page
-    - :archived_petition_page
-    - :page_title
-    - :petition
+    - :url
   options:
     expires_in: 300
 
@@ -24,12 +20,20 @@ footer:
 home_page:
   keys:
     - :last_signature_at
-    - :reveal_response
+    - :last_government_response_updated_at
+    - :last_debate_outcome_updated_at
   options:
     expires_in: 300
 
 petition:
   keys:
     - :petition
+    - :reveal_response
   options:
     expires_in: 300
+
+robots:
+  keys:
+    - :last_petition_created_at
+  options:
+    expires_in: 86400

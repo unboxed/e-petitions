@@ -29,8 +29,11 @@ module CacheHelper
       delegate :create_petition_page?, to: :template
       delegate :home_page?, to: :template
       delegate :last_signature_at, to: :template
+      delegate :last_government_response_updated_at, to: :template
+      delegate :last_debate_outcome_updated_at, to: :template
       delegate :petition_page?, to: :template
       delegate :page_title, to: :template
+      delegate :request, to: :template
 
       def initialize(template)
         @template = template
@@ -48,6 +51,10 @@ module CacheHelper
         home_page?
       end
 
+      def last_petition_created_at
+        Site.last_petition_created_at
+      end
+
       def petition
         assigns['petition'] if petition_page?
       end
@@ -62,6 +69,10 @@ module CacheHelper
 
       def site_updated_at
         Site.updated_at
+      end
+
+      def url
+        request.original_url
       end
 
       def for(keys)
@@ -183,5 +194,13 @@ module CacheHelper
 
   def last_signature_at
     @_last_signature_at ||= Petition.maximum(:last_signed_at)
+  end
+
+  def last_government_response_updated_at
+    @_last_government_response_updated_at ||= GovernmentResponse.maximum(:updated_at)
+  end
+
+  def last_debate_outcome_updated_at
+    @_last_debate_outcome_updated_at ||= DebateOutcome.maximum(:updated_at)
   end
 end

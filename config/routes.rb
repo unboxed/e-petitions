@@ -38,8 +38,6 @@ Rails.application.routes.draw do
 
     post 'petitions/new' => 'petitions#create', :as => :create_petition
 
-    get 'search' => 'search#search', :as => :search
-
     scope 'signatures/:id' do
       get 'verify/:token' => 'signatures#verify', :as => :verify_signature
       get 'unsubscribe/:unsubscribe_token' => 'signatures#unsubscribe', :as => :unsubscribe_signature
@@ -87,7 +85,9 @@ Rails.application.routes.draw do
         resource 'schedule-debate', :only => [:show, :update], as: :schedule_debate, controller: :schedule_debate
       end
       resources :profile, :only => [:edit, :update]
-      resources :signatures, :only => [:destroy]
+      resources :signatures, :only => [:destroy] do
+        post :validate, :on => :member
+      end
       resources :user_sessions, :only => [:create]
       get 'logout' => 'user_sessions#destroy', :as => :logout
       get 'login' => 'user_sessions#new', :as => :login
