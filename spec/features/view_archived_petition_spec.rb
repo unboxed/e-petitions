@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'View archived petition', type: :feature do
   let(:archive_message) {'This petition has been archived It was submitted during the 2010–2015 Conservative – Liberal Democrat coalition government'}
-  let(:petition) {@petition = FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence')}
-  let(:rejected_petition) {@petition = FactoryGirl.create(:archived_petition, :rejected, title: "Please bring back Eldorado", reason_for_rejection: "<i>We<i> like http://www.google.com and bambi@gmail.com")}
+  let(:petition) {FactoryGirl.create(:archived_petition, :closed, title: 'Spend more money on Defence')}
+  let(:rejected_petition) {FactoryGirl.create(:archived_petition, :rejected, title: "Please bring back Eldorado", reason_for_rejection: "<i>We<i> like http://www.google.com and bambi@gmail.com")}
   
   it 'that is closed' do
     visit archived_petition_url(petition)
