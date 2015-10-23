@@ -16,9 +16,9 @@ RSpec.describe 'Feedback', type: :feature do
     
     expect(unread_emails_for(petitionemail).size).to eq parse_email_count(1)
     open_email(petitionemail)
-    expect(current_email.default_part_body.to_s).to include(feedback.petition_link_or_title)
-    expect(current_email.default_part_body.to_s).to include(feedback.email)
-    expect(current_email.default_part_body.to_s).to include(feedback.comment)
+    expect(current_email).to have_body_text(/#{feedback.petition_link_or_title}/)
+    expect(current_email).to have_body_text(/#{feedback.email}/)
+    expect(current_email).to have_body_text(/#{feedback.comment}/)
   end
   
   it 'is checked for required fields' do
@@ -26,4 +26,5 @@ RSpec.describe 'Feedback', type: :feature do
     expect(page).to have_content("must be completed")
     expect(unread_emails_for(petitionemail).size).to eq parse_email_count(0)
   end
-end      
+end
+      
