@@ -19,7 +19,23 @@ module Anonymization
     end
 
     def in_need_of_anonymizing(time = Time.current)
-      where(state: self::CLOSED_STATE, anonymized_at: nil).where(arel_table[:closed_at].lt(6.months.ago(time)))
+      time_limit = 6.months.ago(time)
+
+      where(anonymized_at: nil).and(
+        rejected_in_need_of_anonymizing(time_limit).or(
+          closed_in_need_of_anonymizing(time_limit)
+        )
+      )
+    end
+
+    def closed_in_need_of_anonymizing(time_limit)
+      where(state: self::CLOSED_STATE)
+        .where(arel_table[:closed_at].lt(time_limit))
+    end
+
+    def rejected_in_need_of_anonymizing(time_limit)
+      where(state: self::REJECTED_STATES)
+        .where(arel_table[:rejected_at].lt(time_limit))
     end
   end
 
