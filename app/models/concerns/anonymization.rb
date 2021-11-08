@@ -13,29 +13,25 @@ module Anonymization
 
   module ClassMethods
     def anonymize_petitions!(time = Time.current)
-      in_need_of_anonymizing(time).find_each do |petition|
+      in_need_of_anonymizing(6.months.ago(time)).find_each do |petition|
         petition.anonymize!
       end
     end
 
-    def in_need_of_anonymizing(time = Time.current)
-      time_limit = 6.months.ago(time)
-
-      where(anonymized_at: nil).and(
-        rejected_in_need_of_anonymizing(time_limit).or(
-          closed_in_need_of_anonymizing(time_limit)
-        )
-      )
+    def in_need_of_anonymizing(time = 6.months.ago)
+      not_anonymized.and(closed_before(time).or(rejected_before(time)))
     end
 
-    def closed_in_need_of_anonymizing(time_limit)
-      where(state: self::CLOSED_STATE)
-        .where(arel_table[:closed_at].lt(time_limit))
+    def not_anonymized
+      where(anonymized_at: nil)
     end
 
-    def rejected_in_need_of_anonymizing(time_limit)
-      where(state: self::REJECTED_STATES)
-        .where(arel_table[:rejected_at].lt(time_limit))
+    def closed_before(time)
+      where(state: self::CLOSED_STATE).where(arel_table[:closed_at].lt(time))
+    end
+
+    def rejected_before(time)
+      where(state: self::REJECTED_STATES).where(arel_table[:rejected_at].lt(time))
     end
   end
 
