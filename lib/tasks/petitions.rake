@@ -88,5 +88,10 @@ namespace :epets do
         end
       end
     end
+
+    desc "Email updated privacy policy"
+    task email_privacy_policy_updates: :environment do
+      EmailPrivacyPolicyUpdatesJob.perform_later
+    end
   end
 end
