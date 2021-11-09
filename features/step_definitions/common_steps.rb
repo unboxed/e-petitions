@@ -14,14 +14,15 @@ Given(/^Parliament is dissolving$/) do
     show_dissolution_notification: true
 end
 
-Given(/^Parliament is dissolved$/) do
+Given(/^Parliament is dissolved and archived$/) do
   Parliament.instance.update! dissolution_at: 1.day.ago,
     dissolution_heading: "Parliament is dissolving",
     dissolution_message: "This means all petitions will close in 2 weeks",
     dissolved_heading: "Parliament has been dissolved",
     dissolved_message: "All petitions have been closed",
     dissolution_faq_url: "https://parliament.example.com/parliament-is-closing",
-    show_dissolution_notification: true
+    show_dissolution_notification: true,
+    archiving_started_at: 2.days.ago
 end
 
 Given(/^Parliament is pending$/) do
@@ -92,4 +93,8 @@ Then(/^I should see the Parliament dissolved warning message$/) do
     expect(page).to have_content "All petitions have been closed"
     expect(page).to have_link "Petitions Committee website", href: "https://parliament.example.com/parliament-is-closing"
   end
+end
+
+When(/^I accept the alert$/) do
+  page.driver.browser.switch_to.alert.accept
 end
