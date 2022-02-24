@@ -90,8 +90,9 @@ namespace :epets do
     end
 
     desc "Email updated privacy policy"
-    task email_privacy_policy_updates: :environment do
-      EmailPrivacyPolicyUpdatesJob.perform_later
+    task :email_privacy_policy_updates, [:date] => :environment do |_task, args|
+      time = (args.time || "2021-03-01").in_time_zone
+      EmailPrivacyPolicyUpdatesJob.perform_now(time: time)
     end
   end
 end
